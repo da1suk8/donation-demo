@@ -1,4 +1,3 @@
-export * from "./lineSdk";
 export * from "./kakaoSdk";
 
 export const lineChannelName = "line:webhook";

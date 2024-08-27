@@ -8,10 +8,9 @@ import {
     kakaoChannelName,
     KakaoSdk,
     lineChannelName,
-    LineSdk,
 } from "./implementations";
 
-const lineSdk = new LineSdk();
+// const lineSdk = new LineSdk();
 const kakaoSdk = new KakaoSdk();
 
 const bot = createKaiaBotClient({
@@ -23,29 +22,29 @@ const bot = createKaiaBotClient({
     rpcEndpoint: process.env.RPC_ENDPOINT ?? "",
 });
 
-bot.on(lineChannelName, (event: MessageEvent) => {
-    if (event.message.type == "text") {
-        switch (event.message.text || "") {
-            case "/connect":
-                lineSdk.connect(bot, event);
-                break;
-            case "/my_wallet":
-                lineSdk.myWallet(bot, event);
-                break;
-            case "/send_tx":
-                lineSdk.sendTx(bot, event);
-                break;
-            case "/disconnect":
-                lineSdk.disconnect(bot, event);
-                break;
-            case "/status":
-                lineSdk.status(bot, event);
-                break;
-            default:
-                lineSdk.say_hello(bot, event);
-        }
-    }
-});
+// bot.on(lineChannelName, (event: MessageEvent) => {
+//     if (event.message.type == "text") {
+//         switch (event.message.text || "") {
+//             case "/connect":
+//                 lineSdk.connect(bot, event);
+//                 break;
+//             case "/my_wallet":
+//                 lineSdk.myWallet(bot, event);
+//                 break;
+//             case "/send_tx":
+//                 lineSdk.sendTx(bot, event);
+//                 break;
+//             case "/disconnect":
+//                 lineSdk.disconnect(bot, event);
+//                 break;
+//             case "/status":
+//                 lineSdk.status(bot, event);
+//                 break;
+//             default:
+//                 lineSdk.say_hello(bot, event);
+//         }
+//     }
+// });
 
 bot.on(kakaoChannelName, (payload: any) => {
     switch (payload.action.params.action || payload.userRequest.utterance) {
@@ -55,17 +54,20 @@ bot.on(kakaoChannelName, (payload: any) => {
         case "/my_wallet":
             kakaoSdk.myWallet(bot, payload);
             break;
+        case "/donate":
+            kakaoSdk.initiateDonate(bot, payload);
+            break;
+        case "/project_list":
+            kakaoSdk.projectList(bot);
+            break;
         case "/send_tx":
-            kakaoSdk.sendTx(bot, payload);
+            kakaoSdk.initiateSendTx(bot, payload);
             break;
         case "/disconnect":
             kakaoSdk.disconnect(bot, payload);
             break;
-        case "/status":
-            kakaoSdk.status(bot);
-            break;
         default:
-            kakaoSdk.say_hello(bot);
+            kakaoSdk.handleDefaultCase(bot, payload);
     }
 });
 
